@@ -2,7 +2,7 @@
 const PRECIO_HORA_GRABACION = 500;
 let presupuestoEstudio = 5000;
 let nombreEstudio = "";
-const inventarioComprado = []; // Array para cumplir la consigna
+const inventarioComprado = []; // Array para listar el inventario adquirido
 
 // --- FUNCIONES ---
 
