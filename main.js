@@ -1,41 +1,33 @@
 // --- VARIABLES Y CONSTANTES ---
 let presupuestoEstudio = 5000;
 let nombreEstudio = "";
-let calidadSonido = 0; // <--- Nueva funcionalidad exclusiva
+let calidadSonido = 0; 
 const inventarioComprado = []; 
 
 // --- FUNCIONES ---
 
-// 1. Función con RETURN (Procesamiento de datos)
-// Esta función ahora devuelve un valor para ser usado en otra parte
+// 1. Función con RETURN (Procesamiento)
 function validarPresupuesto(precio) {
-    if (presupuestoEstudio >= precio) {
-        return true; 
-    } else {
-        return false;
-    }
+    return presupuestoEstudio >= precio; // Devuelve true o false directamente
 }
 
-// 2. Función de Salida y Acción
-function realizarCompra(producto) {
-    // Usamos el return de la función anterior
-    if (validarPresupuesto(producto.precio)) {
-        presupuestoEstudio -= producto.precio;
-        calidadSonido += producto.calidad; // Sumamos calidad
-        inventarioComprado.push(producto.nombre);
+// 2. Función de Acción
+function realizarCompra(nombre, precio, calidad) {
+    if (validarPresupuesto(precio)) {
+        presupuestoEstudio -= precio;
+        calidadSonido += calidad;
+        inventarioComprado.push(nombre);
         
-        alert("¡Compra exitosa!\nHas adquirido: " + producto.nombre + 
+        alert("¡Compra exitosa!\nHas adquirido: " + nombre + 
               "\nCalidad de estudio actual: " + calidadSonido + " pts");
         
-        console.log("Nueva compra: " + producto.nombre + ". Saldo: $" + presupuestoEstudio);
-        return true;
+        console.log("Nueva compra: " + nombre + ". Saldo: $" + presupuestoEstudio);
     } else {
-        alert("Fondos insuficientes para comprar " + producto.nombre);
-        return false;
+        alert("No tienes fondos suficientes para " + nombre);
     }
 }
 
-// 3. Función de Catálogo
+// 3. Función de Catálogo (CORREGIDA)
 function mostrarCatalogo() {
     const productos = [
         { id: 1, nombre: "Micrófono Shure", precio: 300, calidad: 15 },
@@ -49,16 +41,28 @@ function mostrarCatalogo() {
     }
     
     let eleccion = prompt(mensaje + "4. Volver\n\nIndique el número del producto:");
-    
-    // Buscamos el producto según la elección
-    let seleccionado = productos.find(p => p.id == eleccion);
-    
-    if (seleccion) {
-        realizarCompra(seleccion);
+
+    // Usamos un Switch simple para evitar el error de referencia
+    switch (eleccion) {
+        case "1":
+            realizarCompra(productos[0].nombre, productos[0].precio, productos[0].calidad);
+            break;
+        case "2":
+            realizarCompra(productos[1].nombre, productos[1].precio, productos[1].calidad);
+            break;
+        case "3":
+            realizarCompra(productos[2].nombre, productos[2].precio, productos[2].calidad);
+            break;
+        case "4":
+            // No hace nada, vuelve al ciclo principal
+            break;
+        default:
+            alert("Opción no válida en el catálogo.");
+            break;
     }
 }
 
-// 4. Función de Inicio y Menú Principal con CICLO (Evita recursión)
+// 4. Función Principal con CICLO (Evita recursión)
 function iniciarSimulador() {
     nombreEstudio = prompt("Bienvenido al Music Studio Manager.\n¿Cómo se llamará tu estudio?");
     if (!nombreEstudio) nombreEstudio = "Estudio Pro";
@@ -67,9 +71,8 @@ function iniciarSimulador() {
 
     let continuar = true;
 
-    // Usamos un ciclo WHILE en lugar de llamar a la función de nuevo
     while (continuar) {
-        let seleccion = prompt(
+        let seleccionMenu = prompt(
             "ESTUDIO: " + nombreEstudio.toUpperCase() + "\n" +
             "Saldo: $" + presupuestoEstudio + " | Calidad: " + calidadSonido + " pts\n\n" +
             "1. Comprar Equipamiento\n" +
@@ -78,26 +81,29 @@ function iniciarSimulador() {
             "4. Salir"
         );
 
-        switch (seleccion) {
+        switch (seleccionMenu) {
             case "1":
                 mostrarCatalogo();
                 break;
             case "2":
-                console.log("--- Inventario Actual ---");
-                console.table(inventarioComprado);
-                alert("Inventario impreso en consola.");
+                console.log("--- Inventario de " + nombreEstudio + " ---");
+                if (inventarioComprado.length === 0) {
+                    console.log("Aún no has comprado equipo.");
+                } else {
+                    console.table(inventarioComprado);
+                }
+                alert("Inventario impreso en consola (F12).");
                 break;
             case "3":
-                // Funcionalidad exclusiva del rubro musical
                 if (calidadSonido >= 60) {
-                    alert("¡ÉXITO! Tu estudio tiene calidad suficiente (" + calidadSonido + " pts) para grabar un hit.");
+                    alert("¡ÉXITO! Tu estudio tiene calidad suficiente (" + calidadSonido + " pts) para grabar un hit mundial.");
                 } else {
-                    alert("Aún no tienes equipo suficiente para sonar profesional. Te faltan " + (60 - calidadSonido) + " pts de calidad.");
+                    alert("Aún no tienes equipo suficiente. Te faltan " + (60 - calidadSonido) + " pts de calidad.");
                 }
                 break;
             case "4":
                 alert("Guardando sesión... ¡Hasta pronto!");
-                continuar = false; // Corta el ciclo y finaliza el programa
+                continuar = false; 
                 break;
             default:
                 alert("Opción no válida.");
@@ -106,5 +112,5 @@ function iniciarSimulador() {
     }
 }
 
-// Invocación única
+// Invocación
 iniciarSimulador();
