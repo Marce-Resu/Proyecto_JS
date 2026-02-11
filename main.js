@@ -1,9 +1,9 @@
 // 1. Catálogo de productos
 const productos = [
-    { id: "mic01", nombre: "Micrófono Shure", precio: 300, calidad: 15, img: "https://placehold.co/150x100?text=Microfono" },
-    { id: "int01", nombre: "Interfaz Focusrite", precio: 800, calidad: 30, img: "https://placehold.co/150x100?text=Interfaz" },
-    { id: "mon01", nombre: "Monitores KRK", precio: 1200, calidad: 50, img: "https://placehold.co/150x100?text=Monitores" },
-    { id: "con01", nombre: "Consola Analógica", precio: 2500, calidad: 100, img: "https://placehold.co/150x100?text=Consola" }
+    { id: "mic01", nombre: "Micrófono Shure", precio: 300, calidad: 15, img: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=200&h=150" },
+    { id: "int01", nombre: "Interfaz Focusrite", precio: 800, calidad: 30, img: "https://upload.wikimedia.org/wikipedia/commons/3/31/Focusrite_Scarlett_2i2%2C_2i4%2C_6i6_USB2.0_Audio_Interfaces_with_Focusrite_Mic_Preamps_-_2014_NAMM_Show_%28by_Matt_Vanacoro%29.jpg" },
+    { id: "mon01", nombre: "Monitores KRK", precio: 1200, calidad: 50, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThjEr2TrlFlSBgGeJqiPkukExqbFZ8faLCGg&s" },
+    { id: "con01", nombre: "Consola Analógica", precio: 2500, calidad: 100, img: "https://http2.mlstatic.com/D_Q_NP_2X_756062-MLA80824639523_112024-T.webp" },
 ];
 
 // 2. Inicialización de estados desde LocalStorage
@@ -21,6 +21,7 @@ const displayNombre = document.getElementById("nombre-estudio-display");
 const btnGrabar = document.getElementById("btn-grabar");
 const mensajesFooter = document.getElementById("mensajes-sistema");
 const formulario = document.getElementById("formulario-inicio");
+const btnReset = document.getElementById("btn-reset");
 
 // 4. Función para actualizar la interfaz y guardar en Storage
 function actualizarInterfaz() {
@@ -105,6 +106,15 @@ btnGrabar.addEventListener("click", () => {
     } else {
         mostrarMensaje(`Calidad insuficiente (${calidadTotal}/60).`);
     }
+});
+
+// 9. Función para reiniciar todo
+btnReset.addEventListener("click", () => {
+    // Borramos los datos del navegador
+    localStorage.clear();
+    
+    // Recargamos la página para que el script empiece de cero
+    location.reload();
 });
 
 // Ejecución inicial
