@@ -3,33 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entregable 1 (Modificado) - Music Studio Manager</title>
+    <title>Music Studio Manager - Pro Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="main.js"></script>
 </head>
 <body>
-    <h1>Music Studio Manager - Simulador de Producción</h1>
-    
-    <section>
-        <h2>Idea General del Proyecto</h2>
-        <p>
-            Este simulador permite gestionar el presupuesto y el crecimiento técnico de un <strong>estudio de grabación profesional</strong>. 
-            A diferencia de una simple lista de compras, el usuario debe equilibrar su presupuesto con la <strong>Calidad de Sonido</strong> acumulada. 
-            Cada equipo adquirido (micrófonos, interfaces, monitores) otorga puntos de calidad que son necesarios para desbloquear la funcionalidad de "Grabar un Hit".
-        </p>
-    </section>
+    <header>
+        <div class="header-content">
+            <h1>Manager de: <span id="nombre-estudio-display">Mi Estudio</span></h1>
+            <div id="stats-container">
+                <p>Presupuesto: $ <span id="presupuesto-display">0</span></p>
+                <p>Calidad: <span id="calidad-display">0</span> pts</p>
+            </div>
+        </div>
+    </header>
 
-    <section>
-        <h2>Instrucciones de Uso</h2>
-        <ul>
-            <li>La interacción se realiza íntegramente mediante cuadros de diálogo (<code>prompt</code>, <code>confirm</code> y <code>alert</code>).</li>
-            <li>El programa utiliza un <strong>bucle de control</strong> para mantener el menú activo sin saturar la memoria del navegador.</li>
-            <li>Se recomienda abrir la <strong>Consola del Navegador (F12)</strong> para visualizar el inventario técnico en formato de tabla y el historial de transacciones.</li>
-        </ul>
-    </section>
+    <main>
+        <section id="configuracion-estudio">
+            <h2>Configurar Estudio</h2>
+            <form id="formulario-inicio">
+                <label for="input-nombre">Nombre del Estudio:</label>
+                <input type="text" id="input-nombre" placeholder="Ej: Red House Studios" required>
+                <button type="submit">Guardar Nombre</button>
+            </form>
+        </section>
 
-    <hr>
-    <p><small>Desarrollado para el curso de JavaScript - Entrega 1 (Refactorizada)</small></p>
+        <section>
+            <h2>Catálogo de Equipamiento</h2>
+            <div id="cards-container">
+                </div>
+        </section>
 
-    <script src="main.js"></script>
-    
+        <section id="inventario-seccion">
+            <h2>Tu Inventario</h2>
+            <ul id="lista-inventario">
+                </ul>
+            <button id="btn-grabar">Grabar Single (Requiere 60 pts)</button>
+        </section>
+    </main>
+
+    <footer id="mensajes-sistema">
+        </footer>
 </body>
 </html>

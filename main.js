@@ -1,116 +1,112 @@
-// --- VARIABLES Y CONSTANTES ---
-let presupuestoEstudio = 5000;
-let nombreEstudio = "";
-let calidadSonido = 0; 
-const inventarioComprado = []; 
+// 1. Catálogo de productos
+const productos = [
+    { id: "mic01", nombre: "Micrófono Shure", precio: 300, calidad: 15, img: "https://placehold.co/150x100?text=Microfono" },
+    { id: "int01", nombre: "Interfaz Focusrite", precio: 800, calidad: 30, img: "https://placehold.co/150x100?text=Interfaz" },
+    { id: "mon01", nombre: "Monitores KRK", precio: 1200, calidad: 50, img: "https://placehold.co/150x100?text=Monitores" },
+    { id: "con01", nombre: "Consola Analógica", precio: 2500, calidad: 100, img: "https://placehold.co/150x100?text=Consola" }
+];
 
-// --- FUNCIONES ---
+// 2. Inicialización de estados desde LocalStorage
+let presupuesto = JSON.parse(localStorage.getItem("presupuesto")) || 5000;
+let calidadTotal = JSON.parse(localStorage.getItem("calidadTotal")) || 0;
+let nombreEstudio = localStorage.getItem("nombreEstudio") || "Mi Gran Estudio";
+const inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
-// 1. Función con RETURN (Procesamiento)
-function validarPresupuesto(precio) {
-    return presupuestoEstudio >= precio; // Devuelve true o false directamente
-}
+// 3. Referencias al DOM
+const contenedorCards = document.getElementById("cards-container");
+const listaInventario = document.getElementById("lista-inventario");
+const displayPresupuesto = document.getElementById("presupuesto-display");
+const displayCalidad = document.getElementById("calidad-display");
+const displayNombre = document.getElementById("nombre-estudio-display");
+const btnGrabar = document.getElementById("btn-grabar");
+const mensajesFooter = document.getElementById("mensajes-sistema");
+const formulario = document.getElementById("formulario-inicio");
 
-// 2. Función de Acción
-function realizarCompra(nombre, precio, calidad) {
-    if (validarPresupuesto(precio)) {
-        presupuestoEstudio -= precio;
-        calidadSonido += calidad;
-        inventarioComprado.push(nombre);
-        
-        alert("¡Compra exitosa!\nHas adquirido: " + nombre + 
-              "\nCalidad de estudio actual: " + calidadSonido + " pts");
-        
-        console.log("Nueva compra: " + nombre + ". Saldo: $" + presupuestoEstudio);
-    } else {
-        alert("No tienes fondos suficientes para " + nombre);
-    }
-}
-
-// 3. Función de Catálogo (CORREGIDA)
-function mostrarCatalogo() {
-    const productos = [
-        { id: 1, nombre: "Micrófono Shure", precio: 300, calidad: 15 },
-        { id: 2, nombre: "Interfaz de Audio", precio: 800, calidad: 30 },
-        { id: 3, nombre: "Monitores de Estudio", precio: 1200, calidad: 50 }
-    ];
-
-    let mensaje = "Equipos disponibles:\n";
-    for (const p of productos) {
-        mensaje += p.id + ". " + p.nombre + " ($" + p.precio + ") [+" + p.calidad + " calidad]\n";
-    }
+// 4. Función para actualizar la interfaz y guardar en Storage
+function actualizarInterfaz() {
+    displayPresupuesto.innerText = presupuesto;
+    displayCalidad.innerText = calidadTotal;
+    displayNombre.innerText = nombreEstudio;
     
-    let eleccion = prompt(mensaje + "4. Volver\n\nIndique el número del producto:");
+    listaInventario.innerHTML = "";
+    inventario.forEach((item) => {
+        const li = document.createElement("li");
+        li.innerText = `${item.nombre} (+${item.calidad} pts)`;
+        listaInventario.appendChild(li);
+    });
 
-    // Usamos un Switch simple para evitar el error de referencia
-    switch (eleccion) {
-        case "1":
-            realizarCompra(productos[0].nombre, productos[0].precio, productos[0].calidad);
-            break;
-        case "2":
-            realizarCompra(productos[1].nombre, productos[1].precio, productos[1].calidad);
-            break;
-        case "3":
-            realizarCompra(productos[2].nombre, productos[2].precio, productos[2].calidad);
-            break;
-        case "4":
-            // No hace nada, vuelve al ciclo principal
-            break;
-        default:
-            alert("Opción no válida en el catálogo.");
-            break;
+    localStorage.setItem("presupuesto", JSON.stringify(presupuesto));
+    localStorage.setItem("calidadTotal", JSON.stringify(calidadTotal));
+    localStorage.setItem("inventario", JSON.stringify(inventario));
+    localStorage.setItem("nombreEstudio", nombreEstudio);
+}
+
+function mostrarMensaje(texto) {
+    mensajesFooter.innerText = texto;
+}
+
+// 5. Manejo del Formulario (Evento SUBMIT)
+formulario.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const inputNombre = document.getElementById("input-nombre");
+    if (inputNombre.value.trim() !== "") {
+        nombreEstudio = inputNombre.value;
+        actualizarInterfaz();
+        mostrarMensaje("Nombre del estudio actualizado.");
+        formulario.reset();
+    }
+});
+
+// 6. Lógica de Compra con validación (Uso de RETURN)
+function validarPresupuesto(precio) {
+    return presupuesto >= precio;
+}
+
+function comprarProducto(producto) {
+    if (validarPresupuesto(producto.precio)) {
+        presupuesto -= producto.precio;
+        calidadTotal += producto.calidad;
+        inventario.push(producto);
+        
+        mostrarMensaje(`Has comprado ${producto.nombre} con éxito.`);
+        actualizarInterfaz();
+    } else {
+        mostrarMensaje("Presupuesto insuficiente.");
     }
 }
 
-// 4. Función Principal con CICLO (Evita recursión)
-function iniciarSimulador() {
-    nombreEstudio = prompt("Bienvenido al Music Studio Manager.\n¿Cómo se llamará tu estudio?");
-    if (!nombreEstudio) nombreEstudio = "Estudio Pro";
+// 7. Generación dinámica de Cards
+function imprimirProductosEnHTML(arrayProductos) {
+    contenedorCards.innerHTML = "";
 
-    alert("¡Bienvenido " + nombreEstudio + "!\nPresupuesto: $" + presupuestoEstudio);
+    for (const producto of arrayProductos) {
+        const card = document.createElement("div");
+        card.classList.add("card-estudio");
+        
+        card.innerHTML = `
+            <img src="${producto.img}" alt="${producto.nombre}">
+            <h3>${producto.nombre}</h3>
+            <p>Precio: $${producto.precio}</p>
+            <p>Calidad: +${producto.calidad}</p>
+            <button id="btn-${producto.id}">Comprar</button>
+        `;
+        
+        contenedorCards.appendChild(card);
 
-    let continuar = true;
-
-    while (continuar) {
-        let seleccionMenu = prompt(
-            "ESTUDIO: " + nombreEstudio.toUpperCase() + "\n" +
-            "Saldo: $" + presupuestoEstudio + " | Calidad: " + calidadSonido + " pts\n\n" +
-            "1. Comprar Equipamiento\n" +
-            "2. Ver Inventario en Consola\n" +
-            "3. Grabar Single (Requiere 60 de calidad)\n" +
-            "4. Salir"
-        );
-
-        switch (seleccionMenu) {
-            case "1":
-                mostrarCatalogo();
-                break;
-            case "2":
-                console.log("--- Inventario de " + nombreEstudio + " ---");
-                if (inventarioComprado.length === 0) {
-                    console.log("Aún no has comprado equipo.");
-                } else {
-                    console.table(inventarioComprado);
-                }
-                alert("Inventario impreso en consola (F12).");
-                break;
-            case "3":
-                if (calidadSonido >= 60) {
-                    alert("¡ÉXITO! Tu estudio tiene calidad suficiente (" + calidadSonido + " pts) para grabar un hit mundial.");
-                } else {
-                    alert("Aún no tienes equipo suficiente. Te faltan " + (60 - calidadSonido) + " pts de calidad.");
-                }
-                break;
-            case "4":
-                alert("Guardando sesión... ¡Hasta pronto!");
-                continuar = false; 
-                break;
-            default:
-                alert("Opción no válida.");
-                break;
-        }
+        const boton = document.getElementById(`btn-${producto.id}`);
+        boton.addEventListener("click", () => comprarProducto(producto));
     }
 }
 
-// Invocación
-iniciarSimulador();
+// 8. Evento Especial (Grabar)
+btnGrabar.addEventListener("click", () => {
+    if (calidadTotal >= 60) {
+        mostrarMensaje("¡HIT LOGRADO! Tu estudio ya es profesional.");
+    } else {
+        mostrarMensaje(`Calidad insuficiente (${calidadTotal}/60).`);
+    }
+});
+
+// Ejecución inicial
+imprimirProductosEnHTML(productos);
+actualizarInterfaz();
