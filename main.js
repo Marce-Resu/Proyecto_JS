@@ -1,96 +1,110 @@
 // --- VARIABLES Y CONSTANTES ---
-const PRECIO_HORA_GRABACION = 500;
 let presupuestoEstudio = 5000;
 let nombreEstudio = "";
-const inventarioComprado = []; // Array para listar el inventario adquirido
+let calidadSonido = 0; // <--- Nueva funcionalidad exclusiva
+const inventarioComprado = []; 
 
 // --- FUNCIONES ---
 
-// 1. Función de Inicio (Entrada de datos)
-function iniciarSimulador() {
-    nombreEstudio = prompt("Bienvenido al Music Studio Manager.\n¿Cómo se llamará tu estudio?");
-    
-    if (nombreEstudio === "" || nombreEstudio === null) {
-        nombreEstudio = "Estudio Genérico";
+// 1. Función con RETURN (Procesamiento de datos)
+// Esta función ahora devuelve un valor para ser usado en otra parte
+function validarPresupuesto(precio) {
+    if (presupuestoEstudio >= precio) {
+        return true; 
+    } else {
+        return false;
     }
-    
-    console.log("--- Reporte Inicial ---");
-    console.log("Estudio: " + nombreEstudio);
-    console.log("Presupuesto inicial: $" + presupuestoEstudio);
-    
-    alert("¡Bienvenido " + nombreEstudio + "!\nTu presupuesto inicial es de $" + presupuestoEstudio);
-    menuPrincipal();
 }
 
-// 2. Función de Procesamiento (Lógica y Ciclos)
+// 2. Función de Salida y Acción
+function realizarCompra(producto) {
+    // Usamos el return de la función anterior
+    if (validarPresupuesto(producto.precio)) {
+        presupuestoEstudio -= producto.precio;
+        calidadSonido += producto.calidad; // Sumamos calidad
+        inventarioComprado.push(producto.nombre);
+        
+        alert("¡Compra exitosa!\nHas adquirido: " + producto.nombre + 
+              "\nCalidad de estudio actual: " + calidadSonido + " pts");
+        
+        console.log("Nueva compra: " + producto.nombre + ". Saldo: $" + presupuestoEstudio);
+        return true;
+    } else {
+        alert("Fondos insuficientes para comprar " + producto.nombre);
+        return false;
+    }
+}
+
+// 3. Función de Catálogo
 function mostrarCatalogo() {
-    // Array de objetos para demostrar manejo de datos
     const productos = [
-        { id: 1, nombre: "Micrófono Shure", precio: 300 },
-        { id: 2, nombre: "Interfaz de Audio", precio: 800 },
-        { id: 3, nombre: "Monitores de Estudio", precio: 1200 }
+        { id: 1, nombre: "Micrófono Shure", precio: 300, calidad: 15 },
+        { id: 2, nombre: "Interfaz de Audio", precio: 800, calidad: 30 },
+        { id: 3, nombre: "Monitores de Estudio", precio: 1200, calidad: 50 }
     ];
 
     let mensaje = "Equipos disponibles:\n";
-    
-    // Ciclo de iteración para recorrer el catálogo
-    for (const producto of productos) {
-        mensaje += producto.id + ". " + producto.nombre + " ($" + producto.precio + ")\n";
+    for (const p of productos) {
+        mensaje += p.id + ". " + p.nombre + " ($" + p.precio + ") [+" + p.calidad + " calidad]\n";
     }
     
-    let eleccion = prompt(mensaje + "4. Volver\n\nIndique el número del producto que desea comprar:");
+    let eleccion = prompt(mensaje + "4. Volver\n\nIndique el número del producto:");
     
-    if (eleccion === "1") realizarCompra(productos[0].nombre, productos[0].precio);
-    else if (eleccion === "2") realizarCompra(productos[1].nombre, productos[1].precio);
-    else if (eleccion === "3") realizarCompra(productos[2].nombre, productos[2].precio);
-    else menuPrincipal();
-}
-
-// 3. Función de Salida (Resultados)
-function realizarCompra(nombre, precio) {
-    if (presupuestoEstudio >= precio) {
-        presupuestoEstudio -= precio;
-        inventarioComprado.push(nombre); // Agregamos al array
-        
-        // Salida por Alert y Consola
-        alert("¡Compra exitosa!\nHas adquirido: " + nombre + "\nSaldo restante: $" + presupuestoEstudio);
-        console.log("Nueva compra: " + nombre + ". Saldo actual: $" + presupuestoEstudio);
-        console.log("Inventario actualizado: ", inventarioComprado);
-    } else {
-        alert("Fondos insuficientes para comprar " + nombre);
+    // Buscamos el producto según la elección
+    let seleccionado = productos.find(p => p.id == eleccion);
+    
+    if (seleccion) {
+        realizarCompra(seleccion);
     }
-    menuPrincipal();
 }
 
-function menuPrincipal() {
-    let seleccion = prompt(
-        "ESTUDIO: " + nombreEstudio.toUpperCase() + "\n" +
-        "Presupuesto: $" + presupuestoEstudio + "\n\n" +
-        "1. Comprar Equipamiento\n" +
-        "2. Ver Inventario en Consola\n" +
-        "3. Salir"
-    );
+// 4. Función de Inicio y Menú Principal con CICLO (Evita recursión)
+function iniciarSimulador() {
+    nombreEstudio = prompt("Bienvenido al Music Studio Manager.\n¿Cómo se llamará tu estudio?");
+    if (!nombreEstudio) nombreEstudio = "Estudio Pro";
 
-    if (seleccion === "1") {
-        mostrarCatalogo();
-    } else if (seleccion === "2") {
-        alert("Revisa la consola (F12) para ver tu inventario detallado.");
-        console.log("--- Inventario de " + nombreEstudio + " ---");
-        if (inventarioComprado.length === 0) {
-            console.log("El inventario está vacío.");
-        } else {
-            inventarioComprado.forEach((item, index) => {
-                console.log((index + 1) + ". " + item);
-            });
+    alert("¡Bienvenido " + nombreEstudio + "!\nPresupuesto: $" + presupuestoEstudio);
+
+    let continuar = true;
+
+    // Usamos un ciclo WHILE en lugar de llamar a la función de nuevo
+    while (continuar) {
+        let seleccion = prompt(
+            "ESTUDIO: " + nombreEstudio.toUpperCase() + "\n" +
+            "Saldo: $" + presupuestoEstudio + " | Calidad: " + calidadSonido + " pts\n\n" +
+            "1. Comprar Equipamiento\n" +
+            "2. Ver Inventario en Consola\n" +
+            "3. Grabar Single (Requiere 60 de calidad)\n" +
+            "4. Salir"
+        );
+
+        switch (seleccion) {
+            case "1":
+                mostrarCatalogo();
+                break;
+            case "2":
+                console.log("--- Inventario Actual ---");
+                console.table(inventarioComprado);
+                alert("Inventario impreso en consola.");
+                break;
+            case "3":
+                // Funcionalidad exclusiva del rubro musical
+                if (calidadSonido >= 60) {
+                    alert("¡ÉXITO! Tu estudio tiene calidad suficiente (" + calidadSonido + " pts) para grabar un hit.");
+                } else {
+                    alert("Aún no tienes equipo suficiente para sonar profesional. Te faltan " + (60 - calidadSonido) + " pts de calidad.");
+                }
+                break;
+            case "4":
+                alert("Guardando sesión... ¡Hasta pronto!");
+                continuar = false; // Corta el ciclo y finaliza el programa
+                break;
+            default:
+                alert("Opción no válida.");
+                break;
         }
-        menuPrincipal();
-    } else if (seleccion === "3") {
-        alert("Gracias por usar Music Studio Manager. ¡Sigue creando hits!");
-    } else {
-        alert("Opción no válida.");
-        menuPrincipal();
     }
 }
 
-// Invocación de la función principal
+// Invocación única
 iniciarSimulador();
