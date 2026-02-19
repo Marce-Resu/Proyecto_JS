@@ -1,18 +1,29 @@
-// 1. Catálogo de productos
+// 1. Clase para mejorar la escalabilidad (Sugerencia del profe)
+class Producto {
+    constructor(id, nombre, precio, calidad, img) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.calidad = calidad;
+        this.img = img;
+    }
+}
+
+// 2. Catálogo de productos (Instanciados mediante la clase)
 const productos = [
-    { id: "mic01", nombre: "Micrófono Shure", precio: 300, calidad: 15, img: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=200&h=150" },
-    { id: "int01", nombre: "Interfaz Focusrite", precio: 800, calidad: 30, img: "https://upload.wikimedia.org/wikipedia/commons/3/31/Focusrite_Scarlett_2i2%2C_2i4%2C_6i6_USB2.0_Audio_Interfaces_with_Focusrite_Mic_Preamps_-_2014_NAMM_Show_%28by_Matt_Vanacoro%29.jpg" },
-    { id: "mon01", nombre: "Monitores KRK", precio: 1200, calidad: 50, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThjEr2TrlFlSBgGeJqiPkukExqbFZ8faLCGg&s" },
-    { id: "con01", nombre: "Consola Analógica", precio: 2500, calidad: 100, img: "https://http2.mlstatic.com/D_Q_NP_2X_756062-MLA80824639523_112024-T.webp" },
+    new Producto("mic01", "Micrófono Shure", 300, 15, "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=200&h=150"),
+    new Producto("int01", "Interfaz Focusrite", 800, 30, "https://upload.wikimedia.org/wikipedia/commons/3/31/Focusrite_Scarlett_2i2%2C_2i4%2C_6i6_USB2.0_Audio_Interfaces_with_Focusrite_Mic_Preamps_-_2014_NAMM_Show_%28by_Matt_Vanacoro%29.jpg"),
+    new Producto("mon01", "Monitores KRK", 1200, 50, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThjEr2TrlFlSBgGeJqiPkukExqbFZ8faLCGg&s"),
+    new Producto("con01", "Consola Analógica", 2500, 100, "https://http2.mlstatic.com/D_Q_NP_2X_756062-MLA80824639523_112024-T.webp")
 ];
 
-// 2. Inicialización de estados desde LocalStorage
+// 3. Inicialización de estados desde LocalStorage
 let presupuesto = JSON.parse(localStorage.getItem("presupuesto")) || 5000;
 let calidadTotal = JSON.parse(localStorage.getItem("calidadTotal")) || 0;
 let nombreEstudio = localStorage.getItem("nombreEstudio") || "Mi Gran Estudio";
 const inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
-// 3. Referencias al DOM
+// 4. Referencias al DOM
 const contenedorCards = document.getElementById("cards-container");
 const listaInventario = document.getElementById("lista-inventario");
 const displayPresupuesto = document.getElementById("presupuesto-display");
@@ -23,7 +34,7 @@ const mensajesFooter = document.getElementById("mensajes-sistema");
 const formulario = document.getElementById("formulario-inicio");
 const btnReset = document.getElementById("btn-reset");
 
-// 4. Función para actualizar la interfaz y guardar en Storage
+// 5. Función para actualizar la interfaz y guardar en Storage
 function actualizarInterfaz() {
     displayPresupuesto.innerText = presupuesto;
     displayCalidad.innerText = calidadTotal;
@@ -46,7 +57,7 @@ function mostrarMensaje(texto) {
     mensajesFooter.innerText = texto;
 }
 
-// 5. Manejo del Formulario (Evento SUBMIT)
+// 6. Manejo del Formulario (Evento SUBMIT)
 formulario.addEventListener("submit", (e) => {
     e.preventDefault();
     const inputNombre = document.getElementById("input-nombre");
@@ -58,7 +69,7 @@ formulario.addEventListener("submit", (e) => {
     }
 });
 
-// 6. Lógica de Compra con validación (Uso de RETURN)
+// 7. Lógica de Compra con validación (Uso de RETURN)
 function validarPresupuesto(precio) {
     return presupuesto >= precio;
 }
@@ -76,7 +87,7 @@ function comprarProducto(producto) {
     }
 }
 
-// 7. Generación dinámica de Cards
+// 8. Generación dinámica de Cards
 function imprimirProductosEnHTML(arrayProductos) {
     contenedorCards.innerHTML = "";
 
@@ -99,21 +110,24 @@ function imprimirProductosEnHTML(arrayProductos) {
     }
 }
 
-// 8. Evento Especial (Grabar)
+// 9. Evento Especial (Grabar) + Vaciado de inventario (Sugerencia del profesor)
 btnGrabar.addEventListener("click", () => {
     if (calidadTotal >= 60) {
-        mostrarMensaje("¡HIT LOGRADO! Tu estudio ya es profesional.");
+        mostrarMensaje("¡HIT LOGRADO! El estudio ha sido un éxito. Reiniciando inventario para el próximo proyecto.");
+        
+        // Vaciamos el inventario y reseteamos calidad
+        inventario.length = 0; 
+        calidadTotal = 0;
+        
+        actualizarInterfaz();
     } else {
         mostrarMensaje(`Calidad insuficiente (${calidadTotal}/60).`);
     }
 });
 
-// 9. Función para reiniciar todo
+// 10. Función para reiniciar todo
 btnReset.addEventListener("click", () => {
-    // Borramos los datos del navegador
     localStorage.clear();
-    
-    // Recargamos la página para que el script empiece de cero
     location.reload();
 });
 
