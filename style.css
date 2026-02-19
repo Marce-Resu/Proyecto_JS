@@ -84,3 +84,13 @@ button:hover {
     color: #d9534f;
     min-height: 1.5em;
 }
+
+/* Estilo específico para el botón de reinicio */
+#btn-reset {
+    background-color: #d9534f; /* Rojo */
+    margin-top: 10px;
+}
+
+#btn-reset:hover {
+    background-color: #c9302c; /* Un rojo más oscuro al pasar el mouse */
+}
