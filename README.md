@@ -37,3 +37,5 @@ Para esta entrega final me enfoqué en el manejo de datos asíncronos y la exper
 2. Navega por el catálogo y selecciona los equipos que desees comprar.
 3. Observa tu inventario y estadísticas en tiempo real.
 4. Al llegar a 60 puntos de calidad, presiona "Grabar Single". Al grabar un hit, el equipo se considera amortizado y el inventario se reiniciará para un nuevo proyecto.
+
+## Nota para la ejecución ## : Debido al uso de fetch para cargar los productos de forma asíncrona, para visualizar el proyecto correctamente se recomienda utilizar Live Server (en VS Code) o cualquier servidor local para evitar bloqueos de seguridad del navegador (CORS).
